@@ -1,0 +1,28 @@
+name: Cosmin
+version: ${project.version}
+main: me.sachin.cosmin
+api-version: 1.16
+authors: [ sachingorkar ]
+depend: [ProtocolLib]
+description: Cosmetic Armor Plugin
+commands:
+  cosmin:
+    description: core command for cosmin plugin
+permission:
+  cosmin.command.help:
+    default: true
+    description: shows the list of commands from cosmin plugin
+  cosmin.command.reload:
+    default: op
+    description: reloads cosmin plugin
+  cosmin.command.fakeequip:
+    default: true
+    description: opens cosmetic equipment gui
+  cosmin.*:
+    default: op
+    description: gives all permissions from cosmin plugin
+    children:
+      cosmin.command.help: true
+      cosmin.command.reload: true
+      cosmin.command.fakeequip: true            
+

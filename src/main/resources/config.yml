@@ -1,0 +1,15 @@
+Title: "Cosmetic GUI"
+
+Aliases: [fakeequip]
+
+
+inventoryItems:
+  enabledSlotItem:
+    Id: lime_stained_glass_pane
+    Display: "&aEnabled"
+  disabledSlotItem:
+    Id: red_stained_glass_pane
+    Display: "&cDisabled"
+  blockedSlotItem:
+    Id: gray_stained_glass_pane
+    Display: ""
