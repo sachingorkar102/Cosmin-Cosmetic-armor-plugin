@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import me.sachin.cosmin;
+import me.sachin.Cosmin;
 
 public class PlayerUtils {
 
@@ -53,22 +53,12 @@ public class PlayerUtils {
 
     public static boolean hasCosminInv(Player p){
         PersistentDataContainer data = p.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(cosmin.getPlugin(), itemserializer.getKeyName());
-        if(data.has(key, PersistentDataType.STRING)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        NamespacedKey key = new NamespacedKey(Cosmin.getPlugin(), ItemSerializer.getKeyName());
+        return data.has(key, PersistentDataType.STRING);
     }
 
     public static boolean hasHashMap(Player p){
-        if(getBackuparmor().keySet().contains(p)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return getBackuparmor().keySet().contains(p);
     }
     
 }

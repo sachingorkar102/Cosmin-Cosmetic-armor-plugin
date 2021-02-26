@@ -1,5 +1,5 @@
 name: Cosmin
-version: ${project.version}
+version: 0.1
 main: me.sachin.Cosmin
 api-version: 1.16
 authors: [ sachingorkar ]

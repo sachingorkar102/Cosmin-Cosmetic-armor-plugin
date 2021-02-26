@@ -3,7 +3,7 @@ package me.sachin.commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.sachin.cosmin;
+import me.sachin.Cosmin;
 import net.md_5.bungee.api.ChatColor;
 
 public class ReloadCommand extends SubCommands {
@@ -28,11 +28,14 @@ public class ReloadCommand extends SubCommands {
         return "reloads the cosmin config";
     }
 
+
     @Override
     public void perform(CommandSender sender, String[] args) {
-        cosmin.reloadConfigs();
-        Player p = (Player) sender;
-        p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aCosmin Plugin reloaded successfully"));
+        Cosmin.reloadConfigs();
+        if((sender instanceof Player)){
+            Player p = (Player) sender;
+            p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aReloaded &eCosmin &asuccessfully"));
+        }
     }
 
 

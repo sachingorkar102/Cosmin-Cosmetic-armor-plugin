@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.sachin.ceicommand.CM;
+import me.sachin.utils.ConsoleUtils;
 import net.md_5.bungee.api.ChatColor;
 
 public class HelpCommand extends SubCommands {
@@ -30,9 +31,10 @@ public class HelpCommand extends SubCommands {
         return "shows list of all commands in cosmin plugin";
     }
 
+
+
     @Override
     public void perform(CommandSender sender, String[] args) {
-        Player p = (Player) sender;
         List<SubCommands> commands = new CommandManager().getSubcommands();
         StringBuilder builder = new StringBuilder();
         builder.append(ChatColor.translateAlternateColorCodes('&', "&2-----------==&aCosmin&2==-----------")+"\n");
@@ -42,7 +44,13 @@ public class HelpCommand extends SubCommands {
         CM mng = new CM("ceiCommand");
         builder.append(ChatColor.translateAlternateColorCodes('&',"&f"+mng.getUsage()+"&a: "+mng.getDescription()+"\n&e"+mng.getPermission())+"\n");
         builder.append(ChatColor.translateAlternateColorCodes('&', "&2--------------------------------"));
-        p.sendMessage(builder.toString());
+        if((sender instanceof Player)){
+            Player p = (Player) sender;
+            p.sendMessage(builder.toString());
+        }
+        else{
+            new ConsoleUtils().sendConsoleMessage('&', builder.toString());
+        }
 
     }
 

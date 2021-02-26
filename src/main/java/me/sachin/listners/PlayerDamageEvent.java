@@ -15,9 +15,9 @@ public class PlayerDamageEvent implements Listener{
             if(!p.hasPermission("cosmin.command.fakeequip")) return;
             if(PlayerUtils.hasCosminInv(p)){
                 if(PlayerUtils.hasHashMap(p)){
-                    onInventoryCloseEvent.fakeEquipOnEvents(p);
+                    OnInventoryCloseEvent.fakeEquipOnEvents(p);
                 }else{
-                    onInventoryCloseEvent.fakeArmor(p, false);
+                    OnInventoryCloseEvent.fakeArmor(p, false);
                 }
             }
         }

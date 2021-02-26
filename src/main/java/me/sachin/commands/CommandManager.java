@@ -25,24 +25,29 @@ public class CommandManager implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!(sender instanceof Player)){
-            console.sendConsoleMessage('&', "&cRequires a player to execute command");
-            return true;
-        }
         if(args.length > 0){
-            Player p = (Player) sender;
             for (int i = 0; i < getSubcommands().size(); i++){
-                if(!p.hasPermission(getSubcommands().get(i).getPermission())){
-                    p.sendMessage(ConfigurationUtils.noPermMessage());
-                    return true;
+                if(args[0].equals(getSubcommands().get(i).getName())){
+                    if((sender instanceof Player)){
+                        Player p = (Player) sender;
+                        SubCommands sub = getSubcommands().get(i);
+                        if(p.hasPermission(sub.getPermission())){
+                            sub.perform(sender, args);
+                        }else{
+                            p.sendMessage(ConfigurationUtils.noPermMessage());
+                        }
+                    }
+                    else{
+                        getSubcommands().get(i).perform(sender, args);
+                    }
+                    
                 }
-                if (args[0].equalsIgnoreCase(getSubcommands().get(i).getName())){
-                    getSubcommands().get(i).perform(sender, args);
-                }
+                // if(!getSubcommands().get(i).requiresPlayer() && args[0].equalsIgnoreCase(getSubcommands().get(i).getName())){
+                // }else{
+                // }
             }
         }
         else{
-            //TODO send help message
         }
         
         return true;

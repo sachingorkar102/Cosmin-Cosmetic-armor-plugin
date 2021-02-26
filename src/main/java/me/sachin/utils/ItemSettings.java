@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
-import me.sachin.cosmin;
+import me.sachin.Cosmin;
 import net.md_5.bungee.api.ChatColor;
 
 public class ItemSettings {
@@ -19,7 +19,7 @@ public class ItemSettings {
     public ItemSettings(String itemName){
         this.itemName = itemName;
         try {
-            settings = cosmin.getPlugin().getConfig().getConfigurationSection("inventoryItems").getConfigurationSection(itemName);
+            settings = Cosmin.getPlugin().getConfig().getConfigurationSection("inventoryItems").getConfigurationSection(itemName);
         } catch (Exception e) {
             console.sendConsoleMessage('&', "Could not Load Item Settings");
         }
@@ -81,6 +81,14 @@ public class ItemSettings {
             return null;
         }
 
+    }
+
+    public boolean showToolTip(){
+        try {
+            return settings.getBoolean("showToolTip");
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 
