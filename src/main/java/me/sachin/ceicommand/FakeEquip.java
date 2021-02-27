@@ -25,6 +25,7 @@ import me.sachin.utils.ConfigurationUtils;
 import me.sachin.utils.ConsoleUtils;
 import me.sachin.utils.ItemSettings;
 import me.sachin.utils.PlayerUtils;
+import net.md_5.bungee.api.ChatColor;
 import me.sachin.utils.ItemSerializer;
 
 public class FakeEquip extends Command {
@@ -72,27 +73,40 @@ public class FakeEquip extends Command {
         setAliases(ConfigurationUtils.getCommandAlias());
         setDescription("&aopens cosmetic equipment gui");
         setPermission("cosmin.command.fakeequip");
-        setUsage("/"+getAliases().get(0));
-        
+        setUsage("/" + getAliases().get(0));
 
     }
 
     @Override
     public boolean execute(CommandSender sender, String arg, String[] args) {
-        if(!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             new ConsoleUtils().sendConsoleMessage('&', "&cRequires Player to execute the command");
             return true;
         }
-        Player p = (Player) sender;     
-        if(!p.hasPermission("cosmin.command.fakeequip")){
+        Player p = (Player) sender;
+        if (!p.hasPermission("cosmin.command.fakeequip")) {
             p.sendMessage(ConfigurationUtils.noPermMessage());
+            return true;
+        }
+        else if(PlayerUtils.getCurrentlyEditedInventory().containsValue(p)){
+            p.sendMessage(ChatColor.RED+"Your Inventory is currently been edited");
             return true;
         }
         String title = ConfigurationUtils.getInvTitle();
         Inventory cosminInv = Bukkit.createInventory(p, 18, title);
-        if(PlayerUtils.hasCosminInv(p)){
+        if (PlayerUtils.hasCosminInv(p)) {
             ArrayList<ItemStack> list = ItemSerializer.getItems(p);
-            Collections.replaceAll(list, list.get(0), Cosmin.getBlockedSlotItem());
+            ItemStack blockedItem = Cosmin.getBlockedSlotItem();
+            ItemStack enabledItem = Cosmin.getEnabledSlotItem();
+            ItemStack disabledItem = Cosmin.getDisabledSlotItem();
+            Collections.replaceAll(list,list.get(0),blockedItem);
+            for(int i=2;i<7;i++){
+                if(isEnabledItem(list.get(i))){
+                    list.set(i, enabledItem);
+                }else{
+                    list.set(i, disabledItem);
+                }
+            }
             ItemStack[] items = list.toArray(new ItemStack[0]);
             cosminInv.setContents(items);
             p.openInventory(cosminInv);
@@ -112,6 +126,13 @@ public class FakeEquip extends Command {
         }
         getCosminInventoryViewers().add(p);
         return true;
+    }
+
+    public static boolean isEnabledItem(ItemStack item){
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer data = meta.getPersistentDataContainer();
+        NamespacedKey key = new NamespacedKey(Cosmin.getPlugin(), "enabledSlotItem");
+        return data.has(key, PersistentDataType.STRING);
     }
     
 }

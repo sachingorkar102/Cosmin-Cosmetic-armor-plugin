@@ -20,6 +20,7 @@ public class CommandManager implements CommandExecutor {
     public CommandManager(){
         subcommands.add(new HelpCommand());
         subcommands.add(new ReloadCommand());
+        subcommands.add(new OpenCommand());
     }
 
 

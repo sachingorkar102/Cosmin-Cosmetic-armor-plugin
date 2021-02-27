@@ -18,6 +18,7 @@ import me.sachin.commands.TabComplete;
 import me.sachin.listners.PlayerDamageEvent;
 import me.sachin.listners.PlayerDieEvent;
 import me.sachin.listners.CosminInventoryClickEvent;
+import me.sachin.listners.GameModeChangeEvent;
 import me.sachin.listners.OnInventoryCloseEvent;
 import me.sachin.listners.ItemMendEvent;
 import me.sachin.listners.PlayerJoinQuitEvent;
@@ -64,6 +65,7 @@ public class Cosmin extends JavaPlugin{
         pluginManager.registerEvents(new ItemMendEvent(), this);
         pluginManager.registerEvents(new PlayerDieEvent(), this);
         pluginManager.registerEvents(new PlayerJoinQuitEvent(), this);
+        pluginManager.registerEvents(new GameModeChangeEvent(), this);
         getCommand("cosmin").setExecutor(new CommandManager());
         getCommand("cosmin").setTabCompleter(new TabComplete());
 

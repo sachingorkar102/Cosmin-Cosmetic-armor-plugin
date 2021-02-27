@@ -1,4 +1,5 @@
 Title: "Cosmetic GUI"
+noPermissionMessage: "&eYou Dont Have Permission to run the Command"
 
 # a list of aliases to open the cosmetic gui
 Aliases: [fakeequip]

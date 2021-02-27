@@ -1,10 +1,15 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class test {
 
 
     public static void main(String[] args) {
-        for(int i = 11;i<16;i++){
-            System.out.println(i);
-        }
+        List<String> list = Arrays.asList("help1","help2","help3","help1");
+        Collections.replaceAll(list,"help1","help8");
+        System.out.println(list);
     }
     
 }

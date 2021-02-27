@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+import com.comphenix.protocol.PacketType.Play;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 
@@ -23,6 +23,11 @@ public class PlayerUtils {
     private static HashMap<Player,List<ItemStack>> backupFakeEquipment = new HashMap<>(); 
     private static HashMap<Player,List<Pair<ItemSlot,ItemStack>>> backuparmor = new HashMap<>();
     private static List<Player> openedInv = new ArrayList<>();
+    private static HashMap<Player,Player> currentlyEditedInventory = new HashMap<>();
+
+    public static HashMap<Player,Player> getCurrentlyEditedInventory() {
+        return currentlyEditedInventory;
+    }
 
 
     public static HashMap<Player, List<Pair<ItemSlot, ItemStack>>> getBackuparmor() {
@@ -32,9 +37,8 @@ public class PlayerUtils {
     
     
 
-    public static List<Player> getOnlinePlayerList(Player p) {
+    public static List<Player> getOnlinePlayerList() {
         List<Player> list = Bukkit.getOnlinePlayers().stream().collect(Collectors.toList());
-        // list.remove(p);
         return list;
     }
     

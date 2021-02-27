@@ -16,6 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 import me.sachin.Cosmin;
 import me.sachin.ceicommand.FakeEquip;
 import me.sachin.utils.ItemSettings;
+import me.sachin.utils.PlayerUtils;
 
 public class CosminInventoryClickEvent implements Listener{
 
@@ -25,7 +26,7 @@ public class CosminInventoryClickEvent implements Listener{
     public void onInventoryClick(InventoryClickEvent e){
         Player p = (Player) e.getWhoClicked();
         int clickedSlot = e.getSlot();
-        if(FakeEquip.getCosminInventoryViewers().contains(p)){
+        if(FakeEquip.getCosminInventoryViewers().contains(p) || PlayerUtils.getCurrentlyEditedInventory().containsKey(p)){
             if(!Arrays.asList(11,12,13,14,15).contains(clickedSlot) && !(e.getClickedInventory() instanceof PlayerInventory)){
                 e.setCancelled(true);
                 
