@@ -3,13 +3,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonObject;
+
 public class test {
 
 
     public static void main(String[] args) {
-        List<String> list = Arrays.asList("help1","help2","help3","help1");
-        Collections.replaceAll(list,"help1","help8");
-        System.out.println(list);
+        String version = "org.bukkit.craftbukkit.v1_15_R1";
+        String v = version.substring(version.lastIndexOf("v")+1);
+        System.out.println(v);
     }
+
     
 }

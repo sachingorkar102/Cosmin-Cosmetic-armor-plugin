@@ -1,7 +1,7 @@
 name: Cosmin
 version: ${project.version}
 main: me.sachin.Cosmin
-api-version: 1.16
+api-version: 1.13
 authors: [ sachingorkar ]
 depend: [ProtocolLib]
 description: Cosmetic Armor Plugin
@@ -18,11 +18,19 @@ permission:
   cosmin.command.fakeequip:
     default: true
     description: opens cosmetic equipment gui
+  cosmin.command.open:
+    default: true
+    description: opens cosmin gui of the specified player  
+  cosmin.command.version:
+    default: op
+    description: displays the plugin version    
   cosmin.*:
     default: op
     description: gives all permissions from cosmin plugin
     children:
       cosmin.command.help: true
       cosmin.command.reload: true
-      cosmin.command.fakeequip: true            
+      cosmin.command.fakeequip: true   
+      cosmin.command.open: true         
+      cosmin.command.version: true         
 

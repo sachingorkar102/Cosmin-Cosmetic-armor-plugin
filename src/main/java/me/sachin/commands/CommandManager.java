@@ -21,6 +21,7 @@ public class CommandManager implements CommandExecutor {
         subcommands.add(new HelpCommand());
         subcommands.add(new ReloadCommand());
         subcommands.add(new OpenCommand());
+        subcommands.add(new VersionCommand());
     }
 
 

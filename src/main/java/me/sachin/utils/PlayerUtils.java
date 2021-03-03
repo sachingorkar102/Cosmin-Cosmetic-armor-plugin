@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.comphenix.protocol.PacketType.Play;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 
@@ -27,6 +26,7 @@ public class PlayerUtils {
 
     public static HashMap<Player,Player> getCurrentlyEditedInventory() {
         return currentlyEditedInventory;
+        
     }
 
 

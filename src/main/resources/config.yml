@@ -9,6 +9,7 @@ Aliases: [fakeequip]
 keepArmorOnDeath: true
 
 
+
 inventoryItems:
   enabledSlotItem:
     Id: lime_stained_glass_pane

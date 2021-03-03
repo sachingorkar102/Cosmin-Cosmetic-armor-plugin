@@ -47,6 +47,15 @@ public class ConfigurationUtils {
         }
     }
 
+    public static boolean stopSounds(){
+        try{
+            return Cosmin.getPlugin().getConfig().getBoolean("stopSounds");
+        
+        }catch(Exception e){
+            return true;
+        }
+    }
+
 
     
 }

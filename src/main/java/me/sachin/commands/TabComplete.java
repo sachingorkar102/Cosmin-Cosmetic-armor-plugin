@@ -20,6 +20,7 @@ public class TabComplete implements TabCompleter {
         List<String> arguments = new ArrayList<>();
         if(args.length == 1){
             manager.getSubcommands().forEach(s -> arguments.add(s.getName()));
+            // arguments.stream().filter(s -> s.endsWith(args[0]));
             return arguments;
         }
         return null;

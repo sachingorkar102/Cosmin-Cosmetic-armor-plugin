@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -88,6 +87,8 @@ public class FakeEquip extends Command {
             p.sendMessage(ConfigurationUtils.noPermMessage());
             return true;
         }
+
+        
         else if(PlayerUtils.getCurrentlyEditedInventory().containsValue(p)){
             p.sendMessage(ChatColor.RED+"Your Inventory is currently been edited");
             return true;
@@ -126,6 +127,7 @@ public class FakeEquip extends Command {
         }
         getCosminInventoryViewers().add(p);
         return true;
+    
     }
 
     public static boolean isEnabledItem(ItemStack item){

@@ -9,11 +9,12 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,9 +32,12 @@ import me.sachin.Cosmin;
 import me.sachin.ceicommand.FakeEquip;
 import me.sachin.utils.PlayerUtils;
 import net.md_5.bungee.api.ChatColor;
+import me.sachin.utils.ConfigurationUtils;
 import me.sachin.utils.ItemSerializer;
 
 public class OnInventoryCloseEvent implements Listener {
+
+    private static String version = Cosmin.getVersion();
 
     @EventHandler
     public void event(InventoryCloseEvent e) {
@@ -63,27 +67,60 @@ public class OnInventoryCloseEvent implements Listener {
 
         }
 
+
+
     }
 
+
     public static void stopSounds(Player p) {
+        boolean defaultValue = p.getWorld().getGameRuleValue(GameRule.SEND_COMMAND_FEEDBACK);
+        if(ConfigurationUtils.stopSounds()){
+            return;
+        }
         new BukkitRunnable(){
             @Override
             public void run() {
-                ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-                PacketContainer packet = manager.createPacket(PacketType.Play.Server.STOP_SOUND);
-                packet.getMinecraftKeys().write(0, new MinecraftKey("minecraft","item.armor.equip_netherite"));
-                try {
-                    manager.sendServerPacket(p, packet);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                p.getWorld().setGameRule(GameRule.SEND_COMMAND_FEEDBACK, false);
+                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_leather");
+                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_chain");
+                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_diamond");
+                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_iron");
+                if(version.contains("v1_16")){
+                    Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_netherite");
+                }
+                if(defaultValue){
+                    p.getWorld().setGameRule(GameRule.SEND_COMMAND_FEEDBACK, false);
                 }
             }   
         }.runTaskLater(Cosmin.getPlugin(), 1);
     }
 
+    public static void fakeEquipv1_15(Player p,List<Pair<ItemSlot,ItemStack>> pairs){
+        for (Pair<ItemSlot,ItemStack> pair : pairs) {
+            ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+            PacketContainer packet = manager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+            packet.getIntegers().write(0, p.getEntityId());
+            packet.getItemSlots().write(0, pair.getFirst());
+            packet.getItemModifier().write(0, pair.getSecond());
+            PlayerUtils.getOnlinePlayerList().forEach(player -> {
+                try {
+                    manager.sendServerPacket(player, packet);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            });
+            
+        }
+        // stopSounds(p);
+    }
+
 
     public static void fakeArmor(Player p,boolean ismending){
+        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+        PacketContainer packet = manager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+        
         List<ItemStack> itemlist = ItemSerializer.getItems(p);
+        List<ItemStack> backupItem = new ArrayList<>();
         List<Pair<ItemSlot,ItemStack>> pairs = new ArrayList<>();
         for(int i =2;i<7;i++){
             // 2  3  4  5  6
@@ -132,17 +169,26 @@ public class OnInventoryCloseEvent implements Listener {
             }
             if(isEnabled(toggleItem)){
                 pairs.add(new Pair<>(slot,armor));
+                backupItem.add(armor);
             }
             else{
                 pairs.add(new Pair<>(slot,p.getInventory().getItem(orignalSlots)));
+                backupItem.add(p.getInventory().getItem(orignalSlots));
             }
         }
-        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-        PacketContainer packet = manager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
         packet.getIntegers().write(0, p.getEntityId());
-        packet.getSlotStackPairLists().write(0, pairs);
+        System.out.println(version);
+        if(version.contains("v1_16")){
+            packet.getSlotStackPairLists().write(0, pairs);
+            p.sendMessage("going with 1.16");
+        }
+        else{
+            p.sendMessage("going with 1.15");
+            fakeEquipv1_15(p, pairs);
+            return;
+        }
         PlayerUtils.getBackuparmor().put(p, pairs);
-        
+    
         PlayerUtils.getOnlinePlayerList().forEach(player -> {
             try {
                 manager.sendServerPacket(player, packet);
@@ -150,6 +196,7 @@ public class OnInventoryCloseEvent implements Listener {
                 e.printStackTrace();
             }
         });
+        // stopSounds(p);
     }
 
 
@@ -160,8 +207,15 @@ public class OnInventoryCloseEvent implements Listener {
                 ProtocolManager manager = ProtocolLibrary.getProtocolManager();
                 PacketContainer packet = manager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
                 packet.getIntegers().write(0, p.getEntityId());
-                List<Pair<ItemSlot,ItemStack>> pair = PlayerUtils.getBackuparmor().get(p);
-                packet.getSlotStackPairLists().write(0, pair);
+                List<Pair<ItemSlot,ItemStack>> pairs = PlayerUtils.getBackuparmor().get(p);
+                // packet.getSlotStackPairLists().write(0, pairs);
+                if(version.contains("v1_16")){
+                    packet.getSlotStackPairLists().write(0, pairs);
+                }
+                else{
+                    fakeEquipv1_15(p, pairs);
+                    return;
+                }
                 PlayerUtils.getOnlinePlayerList().forEach(player -> {
                     try {
                         manager.sendServerPacket(player, packet);
@@ -169,6 +223,7 @@ public class OnInventoryCloseEvent implements Listener {
                         e.printStackTrace();
                     }
                 });
+                // stopSounds(p);
             };
         }.runTaskLater(Cosmin.getPlugin(), 2);
         
@@ -200,7 +255,12 @@ public class OnInventoryCloseEvent implements Listener {
         orignalPairs.add(new Pair<ItemSlot,ItemStack>(ItemSlot.LEGS, playeInventory.getLeggings()));
         orignalPairs.add(new Pair<ItemSlot,ItemStack>(ItemSlot.FEET, playeInventory.getBoots()));
         orignalPairs.add(new Pair<ItemSlot,ItemStack>(ItemSlot.OFFHAND, playeInventory.getItemInOffHand()));
-        packet.getSlotStackPairLists().write(0, orignalPairs);
+        if(version.contains("v1_16")){
+            packet.getSlotStackPairLists().write(0, orignalPairs);
+        }else{
+            fakeEquipv1_15(p, orignalPairs);
+            return;
+        }
         PlayerUtils.getOnlinePlayerList().forEach(player -> {
             try {
                 manager.sendServerPacket(player, packet);

@@ -2,14 +2,11 @@ package me.sachin;
 
 import java.io.File;
 
+
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.sachin.ceicommand.CM;
 import me.sachin.ceicommand.FakeEquip;
@@ -34,6 +31,12 @@ public class Cosmin extends JavaPlugin{
     private static ItemStack disabledSlotItem;
     private static ItemStack blockedSlotItem;
 
+    private static String version;
+    
+    public static String getVersion() {
+        return version;
+    }
+
     public static Cosmin getPlugin() {
         return plugin;
     }
@@ -52,9 +55,14 @@ public class Cosmin extends JavaPlugin{
     @Override
     public void onEnable() {
         plugin = this;
+        if(!checkVersions()){
+            Bukkit.getPluginManager().disablePlugin(this);
+            new ConsoleUtils().sendConsoleMessage('&', "&cRunning uncompatible server version, disabling cosmin");
+            return;
+        }
         if(!getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
-            getLogger().severe(getDescription().getName() + " requires ProtocolLib to run!");
-            getServer().getPluginManager().disablePlugin(this);
+            getLogger().severe("Cosmin requires ProtocolLib to run!\n please install it from here\nhttps://www.spigotmc.org/resources/1997/");
+            Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
         PluginManager pluginManager = this.getServer().getPluginManager();
@@ -77,8 +85,22 @@ public class Cosmin extends JavaPlugin{
 
 
 
+
+
         
 
+    }
+
+
+    public static boolean checkVersions(){
+        String serverVersion = Cosmin.getPlugin().getServer().getClass().getPackage().getName();
+        String Mainversion = serverVersion.substring(serverVersion.lastIndexOf(".") + 1);
+        version = Mainversion;
+        if(Mainversion.contains("v1_16") || Mainversion.contains("v1_15") || Mainversion.contains("v1_14")){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 
@@ -92,7 +114,7 @@ public class Cosmin extends JavaPlugin{
         enabledSlotItem = FakeEquip.itemCreator("enabledSlotItem");
         disabledSlotItem = FakeEquip.itemCreator("disabledSlotItem");
         blockedSlotItem = FakeEquip.itemCreator("blockedSlotItem");
-        new ConsoleUtils().sendConsoleMessage('&', "&aCosmin plugin reloaded");
+        new ConsoleUtils().sendConsoleMessage('&', "Cosmin plugin loaded");
     }
     
 
