@@ -98,11 +98,6 @@ public class CosminInventoryClickEvent implements Listener{
         PersistentDataContainer data = meta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(Cosmin.getPlugin(), "showTootip");
         String value = data.get(key, PersistentDataType.STRING);
-        if(value.equals("true")){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return value.equals("true");
     }
 }

@@ -8,6 +8,9 @@ Aliases: [fakeequip]
 # if this line is deleted it defaults to true
 keepArmorOnDeath: false
 
+# stops the sound played when player equips cosmetic armor
+stopSounds: true
+
 
 inventoryItems:
   enabledSlotItem:

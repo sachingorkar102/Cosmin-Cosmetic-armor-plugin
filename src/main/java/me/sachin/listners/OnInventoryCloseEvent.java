@@ -9,18 +9,20 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.GameRule;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -71,31 +73,42 @@ public class OnInventoryCloseEvent implements Listener {
 
     }
 
+    @EventHandler
+    public void onItemBreak(PlayerItemDamageEvent e){
+        Player p = e.getPlayer();
+        if(!p.hasPermission("cosmin.command.fakeequip")) return;
+        if(PlayerUtils.hasCosminInv(p)){
+            if(PlayerUtils.hasHashMap(p)){
+                fakeEquipOnEvents(p);
+            }else{
+                fakeArmor(p, false);
+            }
+        }
+    }
+
 
     public static void stopSounds(Player p) {
-        boolean defaultValue = p.getWorld().getGameRuleValue(GameRule.SEND_COMMAND_FEEDBACK);
-        if(ConfigurationUtils.stopSounds()){
+        if(!ConfigurationUtils.stopSounds()){
             return;
         }
-        new BukkitRunnable(){
-            @Override
-            public void run() {
-                p.getWorld().setGameRule(GameRule.SEND_COMMAND_FEEDBACK, false);
-                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_leather");
-                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_chain");
-                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_diamond");
-                Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_iron");
-                if(version.contains("v1_16")){
-                    Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "minecraft:stopsound "+p.getName()+" *"+" minecraft:item.armor.equip_netherite");
-                }
-                if(defaultValue){
-                    p.getWorld().setGameRule(GameRule.SEND_COMMAND_FEEDBACK, false);
-                }
-            }   
-        }.runTaskLater(Cosmin.getPlugin(), 1);
+        SoundCategory category = SoundCategory.PLAYERS;
+        p.stopSound(Sound.ITEM_ARMOR_EQUIP_CHAIN,category);
+        p.stopSound(Sound.ITEM_ARMOR_EQUIP_LEATHER,category);
+        p.stopSound(Sound.ITEM_ARMOR_EQUIP_IRON,category);
+        p.stopSound(Sound.ITEM_ARMOR_EQUIP_DIAMOND,category);
+        p.stopSound(Sound.ITEM_ARMOR_EQUIP_GOLD,category);
+        p.stopSound(Sound.ITEM_ARMOR_EQUIP_GENERIC,category);
+        if(version.contains("v1_16")){
+            p.stopSound(Sound.ITEM_ARMOR_EQUIP_NETHERITE,category);
+        }
+        
     }
 
     public static void fakeEquipv1_15(Player p,List<Pair<ItemSlot,ItemStack>> pairs){
+        ProtocolManager managerSound = ProtocolLibrary.getProtocolManager();
+        PacketContainer packetSound = managerSound.createPacket(PacketType.Play.Server.STOP_SOUND);
+        MinecraftKey key = new MinecraftKey("item.armor.equip_leather");
+        packetSound.getMinecraftKeys().writeSafely(0, key);
         for (Pair<ItemSlot,ItemStack> pair : pairs) {
             ProtocolManager manager = ProtocolLibrary.getProtocolManager();
             PacketContainer packet = manager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
@@ -105,13 +118,15 @@ public class OnInventoryCloseEvent implements Listener {
             PlayerUtils.getOnlinePlayerList().forEach(player -> {
                 try {
                     manager.sendServerPacket(player, packet);
+                    
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             });
             
         }
-        // stopSounds(p);
+        stopSounds(p);
+        
     }
 
 
@@ -132,6 +147,7 @@ public class OnInventoryCloseEvent implements Listener {
             ItemStack toggleItem = itemlist.get(i);
             ItemSlot slot = null;
             ItemStack armor = itemlist.get(slotId);
+            String armorName = armor.getType().name();
 
             switch(slotId){
                 case 11:
@@ -141,21 +157,21 @@ public class OnInventoryCloseEvent implements Listener {
                 case 12:
                     slot = ItemSlot.CHEST;
                     orignalSlots = 38;
-                    if(!armor.getType().name().endsWith("CHESTPLATE") && !armor.getType().name().equals("AIR")){
+                    if(!armorName.endsWith("CHESTPLATE") && !armorName.equals("AIR") && !armorName.endsWith("ELYTRA")){
                         continue;
                     }
                     break;
                 case 13:
                     slot = ItemSlot.LEGS; 
                     orignalSlots = 37;  
-                    if(!armor.getType().name().endsWith("LEGGINGS") && !armor.getType().name().equals("AIR")){
+                    if(!armorName.endsWith("LEGGINGS") && !armorName.equals("AIR")){
                         continue;
                     }
                     break;
                 case 14:
                     slot = ItemSlot.FEET;
                     orignalSlots = 36;
-                    if(!armor.getType().name().endsWith("BOOTS") && !armor.getType().name().equals("AIR")){
+                    if(!armorName.endsWith("BOOTS") && !armorName.equals("AIR")){
                         continue;
                     }
                     break;
@@ -177,13 +193,10 @@ public class OnInventoryCloseEvent implements Listener {
             }
         }
         packet.getIntegers().write(0, p.getEntityId());
-        System.out.println(version);
         if(version.contains("v1_16")){
             packet.getSlotStackPairLists().write(0, pairs);
-            p.sendMessage("going with 1.16");
         }
         else{
-            p.sendMessage("going with 1.15");
             fakeEquipv1_15(p, pairs);
             return;
         }
@@ -196,7 +209,7 @@ public class OnInventoryCloseEvent implements Listener {
                 e.printStackTrace();
             }
         });
-        // stopSounds(p);
+        stopSounds(p);
     }
 
 
@@ -223,7 +236,7 @@ public class OnInventoryCloseEvent implements Listener {
                         e.printStackTrace();
                     }
                 });
-                // stopSounds(p);
+                stopSounds(p);
             };
         }.runTaskLater(Cosmin.getPlugin(), 2);
         
@@ -268,15 +281,5 @@ public class OnInventoryCloseEvent implements Listener {
                 e.printStackTrace();
             }
         });
-        // for(int i=0;i<5;i++){
-        //     PacketContainer packet = manager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
-        //     PlayerUtils.getOnlinePlayerList(p).forEach(player -> {
-        //         try {
-        //             manager.sendServerPacket(player, packet);
-        //         } catch (InvocationTargetException e) {
-        //             e.printStackTrace();
-        //         }
-        //     });
-        // }
     }
 }

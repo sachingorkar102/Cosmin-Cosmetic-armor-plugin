@@ -11,11 +11,7 @@ public class ConfigurationUtils {
 
 
     public static String getInvTitle() {
-        try {
-            return ChatColor.translateAlternateColorCodes('&', Cosmin.getPlugin().getConfig().getString("Title"));
-        } catch (Exception e) {
-            return "";
-        }
+        return ChatColor.translateAlternateColorCodes('&', Cosmin.getPlugin().getConfig().getString("Title",""));
     }
 
     public static List<String> getCommandAlias(){
@@ -32,28 +28,16 @@ public class ConfigurationUtils {
     }
 
     public static String noPermMessage(){
-        try {
-            return ChatColor.translateAlternateColorCodes('&', Cosmin.getPlugin().getConfig().getString("noPermissionMessage"));
-        } catch (Exception e) {
-            return ChatColor.translateAlternateColorCodes('&', "&cYou dont have permission to run the command");
-        }
+        return ChatColor.translateAlternateColorCodes('&', Cosmin.getPlugin().getConfig().getString("noPermissionMessage",
+        ChatColor.translateAlternateColorCodes('&', "&cYou dont have permission to run the command")));
     }
 
     public static boolean keepArmorOnDeath(){
-        try {
-            return Cosmin.getPlugin().getConfig().getBoolean("keepArmorOnDeath");
-        } catch (Exception e) {
-            return false;
-        }
+        return Cosmin.getPlugin().getConfig().getBoolean("keepArmorOnDeath",false);
     }
 
     public static boolean stopSounds(){
-        try{
-            return Cosmin.getPlugin().getConfig().getBoolean("stopSounds");
-        
-        }catch(Exception e){
-            return true;
-        }
+        return Cosmin.getPlugin().getConfig().getBoolean("stopSounds",true);
     }
 
 
