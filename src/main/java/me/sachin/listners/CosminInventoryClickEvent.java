@@ -37,19 +37,19 @@ public class CosminInventoryClickEvent implements Listener{
                     String itemId = data.get(new NamespacedKey(Cosmin.getPlugin(), "itemId"), PersistentDataType.STRING);
                     if(data.has(new NamespacedKey(Cosmin.getPlugin(),"enabledSlotItem"), PersistentDataType.STRING)){
                         ItemStack disabledItem = Cosmin.getDisabledSlotItem();
-                        if(showToolTip(disabledItem)){
-                            e.setCurrentItem(setToolTip(disabledItem, clickedSlot,itemId));
-                            return;
-                        }
-                        e.setCurrentItem(Cosmin.getDisabledSlotItem());
+                        // if(showToolTip(disabledItem)){
+                        //     e.setCurrentItem(setToolTip(disabledItem, clickedSlot,itemId));
+                        //     return;
+                        // }
+                        e.setCurrentItem(disabledItem);
                     }
                     else{
                         ItemStack enabledItem = Cosmin.getEnabledSlotItem();
-                        if(showToolTip(enabledItem)){
-                            e.setCurrentItem(setToolTip(enabledItem, clickedSlot,itemId));
-                            return;
-                        }
-                        e.setCurrentItem(Cosmin.getEnabledSlotItem());
+                        // if(showToolTip(enabledItem)){
+                        //     e.setCurrentItem(setToolTip(enabledItem, clickedSlot,itemId));
+                        //     return;
+                        // }
+                        e.setCurrentItem(enabledItem);
 
                     }
                 }
@@ -58,6 +58,7 @@ public class CosminInventoryClickEvent implements Listener{
     }
 
     public ItemStack setToolTip(ItemStack item, int slotId,String itemId){
+        
         ItemMeta meta = item.getItemMeta();
         String tootipDisplay = "";
         switch(slotId){
@@ -87,6 +88,9 @@ public class CosminInventoryClickEvent implements Listener{
             newId = "enabledSlotItem";
         }
         ItemSettings setting = new ItemSettings(newId);
+        if(!setting.showToolTip()){
+            return item;
+        }
         newDisplay = setting.getDisplay() + " " + tootipDisplay;
         meta.setDisplayName(newDisplay);
         item.setItemMeta(meta);

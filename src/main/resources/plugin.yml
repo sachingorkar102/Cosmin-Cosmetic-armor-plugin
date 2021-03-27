@@ -3,7 +3,7 @@ version: ${project.version}
 main: me.sachin.Cosmin
 api-version: 1.13
 authors: [ sachingorkar ]
-depend: [ProtocolLib]
+# depend: [ProtocolLib]
 description: Cosmetic Armor Plugin
 commands:
   cosmin:
@@ -23,7 +23,10 @@ permission:
     description: opens cosmin gui of the specified player  
   cosmin.command.version:
     default: op
-    description: displays the plugin version    
+    description: displays the plugin version
+  cosmin.command.reset:
+    default: op
+    description: resets the player's cosmin inventory data
   cosmin.*:
     default: op
     description: gives all permissions from cosmin plugin

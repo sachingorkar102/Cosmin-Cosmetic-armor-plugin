@@ -148,6 +148,7 @@ public class OnInventoryCloseEvent implements Listener {
             ItemSlot slot = null;
             ItemStack armor = itemlist.get(slotId);
             String armorName = armor.getType().name();
+            // System.out.println(toggleItem);
 
             switch(slotId){
                 case 11:
@@ -244,14 +245,11 @@ public class OnInventoryCloseEvent implements Listener {
 
 
     public static boolean isEnabled(ItemStack toggleItem){
+        if(!toggleItem.hasItemMeta()) return false;
         ItemMeta meta = toggleItem.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(Cosmin.getPlugin(),"enabledSlotItem");
-        if(data.has(key, PersistentDataType.STRING)){
-            return true;
-        }else{
-            return false;
-        }
+        return data.has(key, PersistentDataType.STRING);
     }
 
 

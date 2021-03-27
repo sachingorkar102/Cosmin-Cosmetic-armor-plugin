@@ -1,7 +1,7 @@
 package me.sachin;
 
 import java.io.File;
-
+import java.nio.file.Files;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -53,16 +53,18 @@ public class Cosmin extends JavaPlugin{
     }
 
 
+
     @Override
     public void onEnable() {
         plugin = this;
+        ConsoleUtils console = new ConsoleUtils();
         if(!checkVersions()){
             Bukkit.getPluginManager().disablePlugin(this);
-            new ConsoleUtils().sendConsoleMessage('&', "&cRunning uncompatible server version, disabling cosmin");
+            console.sendConsoleMessage('&', "&cRunning uncompatible server version, disabling cosmin");
             return;
         }
         if(!getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
-            getLogger().severe("Cosmin requires ProtocolLib to run!\n please install it from here\nhttps://www.spigotmc.org/resources/1997/");
+            console.sendConsoleMessage('&',"&cCosmin requires ProtocolLib to run! please install it from here &6https://www.spigotmc.org/resources/1997/");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }

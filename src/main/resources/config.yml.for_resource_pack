@@ -20,11 +20,12 @@ inventoryItems:
     # if set to true the toggle buttons will have respective armorslot names in there display
     # for example "Enabled [HELMET]"
     # this can be usefull for non resource pack users
-    showToolTip: true
+    showToolTip: false
   disabledSlotItem:
     Id: red_dye
     Model: 102
     Display: "&cDisabled"
+    showToolTip: false
   blockedSlotItem:
     Id: yellow_dye
     Model: 100

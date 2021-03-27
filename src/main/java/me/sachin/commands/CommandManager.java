@@ -22,6 +22,7 @@ public class CommandManager implements CommandExecutor {
         subcommands.add(new ReloadCommand());
         subcommands.add(new OpenCommand());
         subcommands.add(new VersionCommand());
+        subcommands.add(new ResetPlayerDataCommand());
     }
 
 

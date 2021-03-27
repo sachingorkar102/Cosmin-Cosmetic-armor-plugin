@@ -65,4 +65,10 @@ public class PlayerUtils {
         return getBackuparmor().keySet().contains(p);
     }
     
+    public static boolean isOnline(String name){
+        List<String> nameList = new ArrayList<>();
+        PlayerUtils.getOnlinePlayerList().forEach(player -> nameList.add(player.getName()));
+        return nameList.contains(name);
+
+    }
 }

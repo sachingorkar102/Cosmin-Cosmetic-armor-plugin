@@ -20,11 +20,23 @@ public class TabComplete implements TabCompleter {
         List<String> arguments = new ArrayList<>();
         if(args.length == 1){
             manager.getSubcommands().forEach(s -> arguments.add(s.getName()));
-            // arguments.stream().filter(s -> s.endsWith(args[0]));
-            return arguments;
+            List<String> betterArgs = new ArrayList<>();
+            arguments.forEach(s -> {
+                if(s.startsWith(args[0])){
+                    betterArgs.add(s);
+                }
+            });
+            if(betterArgs.isEmpty()){
+                return arguments;
+            }
+            else{
+                return betterArgs;
+            }
         }
         return null;
     }
+
+
 
 }    
 

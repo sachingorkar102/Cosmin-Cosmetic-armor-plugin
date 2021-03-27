@@ -32,10 +32,10 @@ public class VersionCommand extends SubCommands {
     public void perform(CommandSender sender, String[] args) {
         if((sender instanceof Player)){
             Player p = (Player) sender;
-            p.sendMessage(ChatColor.YELLOW+"Cosim version: "+ChatColor.GOLD+"1.2");
+            p.sendMessage(ChatColor.YELLOW+"Cosim version: "+ChatColor.GOLD+"1.6");
         }
         else{
-            new ConsoleUtils().sendConsoleMessage('&', "&eCosmin version: &61.2");
+            new ConsoleUtils().sendConsoleMessage('&', "&eCosmin version: &61.6");
         }
 
     }

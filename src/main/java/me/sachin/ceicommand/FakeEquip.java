@@ -20,6 +20,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import me.sachin.Cosmin;
+import me.sachin.listners.CosminInventoryClickEvent;
 import me.sachin.utils.ConfigurationUtils;
 import me.sachin.utils.ConsoleUtils;
 import me.sachin.utils.ItemSettings;
@@ -96,14 +97,17 @@ public class FakeEquip extends Command {
         String title = ConfigurationUtils.getInvTitle();
         Inventory cosminInv = Bukkit.createInventory(p, 18, title);
         if (PlayerUtils.hasCosminInv(p)) {
-            ArrayList<ItemStack> list = ItemSerializer.getItems(p);
+            List<ItemStack> list = ItemSerializer.getItems(p);
             ItemStack blockedItem = Cosmin.getBlockedSlotItem();
             ItemStack enabledItem = Cosmin.getEnabledSlotItem();
             ItemStack disabledItem = Cosmin.getDisabledSlotItem();
             Collections.replaceAll(list,list.get(0),blockedItem);
             for(int i=2;i<7;i++){
+                // enabledSlotItem
+                // disabledSlotItem
                 if(isEnabledItem(list.get(i))){
                     list.set(i, enabledItem);
+                    
                 }else{
                     list.set(i, disabledItem);
                 }
@@ -135,6 +139,50 @@ public class FakeEquip extends Command {
         PersistentDataContainer data = meta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(Cosmin.getPlugin(), "enabledSlotItem");
         return data.has(key, PersistentDataType.STRING);
+    }
+
+    public static ItemStack setToolTip(ItemStack item, int slotId,String itemId){
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("");
+        String tootipDisplay = "";
+        System.out.println(slotId);
+        switch(slotId){
+            case 2:
+                tootipDisplay = "[HELMET]";
+                break;
+            case 3:
+                tootipDisplay = "[CHESTPLATE]";
+                break;
+            case 4:
+                tootipDisplay = "[LEGGINGS]";
+                break;
+            case 5:
+                tootipDisplay = "[BOOTS]";
+                break;
+            case 6:
+                tootipDisplay = "[OFFHAND]";
+                break;    
+            default:
+                tootipDisplay = "";
+
+        }
+        meta.setDisplayName("");
+        // String newId = "";
+        // // enabledSlotItem
+        // // disabledSlotItem
+        // if(itemId.equals("enabledSlotItem")){
+        //     newId = "";
+        // }else{
+        //     newId = "enabledSlotItem";
+        // }
+        ItemSettings setting = new ItemSettings(itemId);
+        if(!setting.showToolTip()){
+            return item;
+        }
+        String newDisplay = setting.getDisplay() + " " + tootipDisplay;
+        meta.setDisplayName(newDisplay);
+        item.setItemMeta(meta);
+        return item;
     }
     
 }
