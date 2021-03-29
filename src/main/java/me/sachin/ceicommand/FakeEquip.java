@@ -53,8 +53,6 @@ public class FakeEquip extends Command {
         PersistentDataContainer data = meta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(Cosmin.getPlugin(), "itemId");
         NamespacedKey key2 = new NamespacedKey(Cosmin.getPlugin(), itemName);
-        NamespacedKey toolTipKey = new NamespacedKey(Cosmin.getPlugin(), "showTootip");
-        data.set(toolTipKey, PersistentDataType.STRING, Boolean.toString(setting.showToolTip()));
         data.set(key, PersistentDataType.STRING, itemName);
         data.set(key2, PersistentDataType.STRING, "");
         meta.setDisplayName(display);
@@ -105,12 +103,15 @@ public class FakeEquip extends Command {
             for(int i=2;i<7;i++){
                 // enabledSlotItem
                 // disabledSlotItem
+                ItemStack item;
                 if(isEnabledItem(list.get(i))){
-                    list.set(i, enabledItem);
+                    item = setToolTip(enabledItem, i, "enabledSlotItem");
+                    // list.set(i,item);
                     
                 }else{
-                    list.set(i, disabledItem);
+                    item = setToolTip(disabledItem, i, "disabledSlotItem");
                 }
+                list.set(i, item);
             }
             ItemStack[] items = list.toArray(new ItemStack[0]);
             cosminInv.setContents(items);
@@ -121,7 +122,7 @@ public class FakeEquip extends Command {
                 if(Arrays.asList(0,1,9,10,7,8,16,17).contains(i)){
                     defaultInv.setItem(i, Cosmin.getBlockedSlotItem());
                 }else if(Arrays.asList(2,3,4,5,6).contains(i)){
-                    defaultInv.setItem(i, Cosmin.getEnabledSlotItem());
+                    defaultInv.setItem(i, Cosmin.getDisabledSlotItem());
                 }
                 else{
                     defaultInv.setItem(i, null);
@@ -145,36 +146,30 @@ public class FakeEquip extends Command {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName("");
         String tootipDisplay = "";
-        System.out.println(slotId);
-        switch(slotId){
-            case 2:
-                tootipDisplay = "[HELMET]";
-                break;
-            case 3:
-                tootipDisplay = "[CHESTPLATE]";
-                break;
-            case 4:
-                tootipDisplay = "[LEGGINGS]";
-                break;
-            case 5:
-                tootipDisplay = "[BOOTS]";
-                break;
-            case 6:
-                tootipDisplay = "[OFFHAND]";
-                break;    
-            default:
-                tootipDisplay = "";
+        if(slotId == 2) tootipDisplay = "[HELMET]";
+        else if(slotId == 3) tootipDisplay = "[CHESTPLATE]";
+        else if(slotId == 4) tootipDisplay = "[LEGGINGS]";
+        else if (slotId == 5) tootipDisplay = "[BOOTS]";
+        else if (slotId == 6) tootipDisplay = "[]";
+        // switch(slotId){
+        //     case 2:
+        //         tootipDisplay = "[HELMET]";
+        //         break;
+        //     case 3:
+        //         tootipDisplay = "[CHESTPLATE]";
+        //         break;
+        //     case 4:
+        //         tootipDisplay = "[LEGGINGS]";
+        //         break;
+        //     case 5:
+        //         tootipDisplay = "[BOOTS]";
+        //         break;
+        //     case 6:
+        //         tootipDisplay = "[OFFHAND]";
+        //         break;    
+        //     default:
+        //         tootipDisplay = "";
 
-        }
-        meta.setDisplayName("");
-        // String newId = "";
-        // // enabledSlotItem
-        // // disabledSlotItem
-        // if(itemId.equals("enabledSlotItem")){
-        //     newId = "";
-        // }else{
-        //     newId = "enabledSlotItem";
-        // }
         ItemSettings setting = new ItemSettings(itemId);
         if(!setting.showToolTip()){
             return item;
@@ -183,6 +178,14 @@ public class FakeEquip extends Command {
         meta.setDisplayName(newDisplay);
         item.setItemMeta(meta);
         return item;
+    }
+
+    public boolean showToolTip(ItemStack item){
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer data = meta.getPersistentDataContainer();
+        NamespacedKey key = new NamespacedKey(Cosmin.getPlugin(), "showTootip");
+        String value = data.get(key, PersistentDataType.STRING);
+        return value.equals("true");
     }
     
 }

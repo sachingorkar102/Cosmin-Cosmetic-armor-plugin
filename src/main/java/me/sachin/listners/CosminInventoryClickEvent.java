@@ -41,7 +41,7 @@ public class CosminInventoryClickEvent implements Listener{
                         //     e.setCurrentItem(setToolTip(disabledItem, clickedSlot,itemId));
                         //     return;
                         // }
-                        e.setCurrentItem(disabledItem);
+                        e.setCurrentItem(setToolTip(disabledItem, clickedSlot, itemId));
                     }
                     else{
                         ItemStack enabledItem = Cosmin.getEnabledSlotItem();
@@ -49,7 +49,7 @@ public class CosminInventoryClickEvent implements Listener{
                         //     e.setCurrentItem(setToolTip(enabledItem, clickedSlot,itemId));
                         //     return;
                         // }
-                        e.setCurrentItem(enabledItem);
+                        e.setCurrentItem(setToolTip(enabledItem, clickedSlot, itemId));
 
                     }
                 }
@@ -97,11 +97,5 @@ public class CosminInventoryClickEvent implements Listener{
         return item;
     }
 
-    public boolean showToolTip(ItemStack item){
-        ItemMeta meta = item.getItemMeta();
-        PersistentDataContainer data = meta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(Cosmin.getPlugin(), "showTootip");
-        String value = data.get(key, PersistentDataType.STRING);
-        return value.equals("true");
-    }
+    
 }

@@ -76,7 +76,7 @@ public class OpenCommand extends SubCommands {
                 if(Arrays.asList(0,1,9,10,7,8,16,17).contains(i)){
                     defaultInv.setItem(i, Cosmin.getBlockedSlotItem());
                 }else if(Arrays.asList(2,3,4,5,6).contains(i)){
-                    defaultInv.setItem(i, Cosmin.getEnabledSlotItem());
+                    defaultInv.setItem(i, Cosmin.getDisabledSlotItem());
                 }
                 else{
                     defaultInv.setItem(i, null);
